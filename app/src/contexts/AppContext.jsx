@@ -40,6 +40,7 @@ export const AppContextProvider = ({ children }) => {
   const [terminalNotification, setTerminalNotification] = useState(false);
   const [parserResponse, setParserResponse] = useState(DEFAULT_PARSER_RESPONSE);
   const [highContrast, setHighContrast] = useState(false);
+  const [editorFontSize, setEditorFontSize] = useState(14);
 
   /**
    * Adiciona uma mensagem de log ao terminal
@@ -217,7 +218,9 @@ export const AppContextProvider = ({ children }) => {
         terminalNotification,
         /* Tema de alto contraste do terminal */
         highContrast,
-        setHighContrast
+        setHighContrast,
+        editorFontSize,
+        setEditorFontSize
       }}
     >
       {contextHolder}

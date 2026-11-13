@@ -15,6 +15,10 @@ const StyledCodeMirror = styled.div`
   overflow: hidden;
   transition: all 0.3s ease;
 
+  .cm-editor {
+    font-size: ${({ $fontSize }) => `${$fontSize}px`};
+  }
+
   &:hover {
     border-color: ${COLORS.border.hover};
   }
@@ -50,7 +54,7 @@ const createHighlightExtension = (first_line, first_column, last_line, last_colu
  * Componente de entrada de código com suporte para destaque de sintaxe JSimples
  */
 export const CodeInput = ({ stepByStep = false }) => {
-  const { setCode, code, mvsState, parserResponse } = useAppData();
+  const { setCode, code, mvsState, parserResponse, editorFontSize } = useAppData();
 
   // Cria extensão de highlight para modo passo a passo
   const highlightExtension = stepByStep
@@ -71,7 +75,7 @@ export const CodeInput = ({ stepByStep = false }) => {
   const extensions = getCodeMirrorExtensions(stepByStep, highlightExtension);
 
   return (
-    <StyledCodeMirror>
+    <StyledCodeMirror $fontSize={editorFontSize}>
       <style>
         {`
           .custom-highlight {
