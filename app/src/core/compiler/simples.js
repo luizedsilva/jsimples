@@ -99,7 +99,7 @@ case 1:
             if (commandsNode) children.push(commandsNode);
             if (footerNode) children.push(footerNode);
 
-            let syntaxTree = new SyntaxNode("Algoritmo", children);
+            let syntaxTree = new SyntaxNode("Programa", children);
 
             let result = { 
                 syntaxTree: syntaxTree, 

@@ -1,3 +1,15 @@
+# Para executar local
+
+Entre na pasata `app`
+
+digite:
+
+```
+npm run dev
+```
+
+Acesse o endereço local que o Vite mostrar, geralmente http://localhost:5173/. Para conferir a versão de produção antes de publicar, rode npm run build e depois npm run preview.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
