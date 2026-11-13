@@ -1,29 +1,37 @@
 import { useEffect, useRef, useState } from "react";
-import Tree from "react-d3-tree";
-import { Tree as DirectoryTree, Switch } from "antd";
+import { instance } from "@viz-js/viz";
+import { Button, Switch, Tree as DirectoryTree } from "antd";
 import { useAppData } from "@/contexts/AppContext";
 import styled from "styled-components";
 import { ViewContainer } from "@/components/atomic/ViewContainer";
-import "@/styles/Tree.css";
 import { IoWarning } from "react-icons/io5";
 import { FaGear } from "react-icons/fa6";
-import { renderCustomNode } from "@/components/TreeNode";
-import { convertToAntdTree } from "@/utils/syntaxTreeUtils.jsx";
+import { convertToAntdTree, syntaxTreeToDot } from "@/utils/syntaxTreeUtils.jsx";
 
 const TreeContainer = styled.div`
   flex-grow: 1;
+  min-height: 360px;
+  height: 620px;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   position: relative;
-  overflow: hidden;
+  overflow: auto;
+  background: #fff;
   box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.1),
     inset 0 10px 10px -10px rgba(0, 0, 0, 0.1);
-  display: ${({ hidden }) => (hidden ? "none" : "block")};
+  display: ${({ $hidden }) => ($hidden ? "none" : "block")};
+
+  svg {
+    display: block;
+    width: ${({ $zoom }) => `${$zoom * 100}%`};
+    height: ${({ $zoom }) => `${$zoom * 100}%`};
+  }
 `;
 
 const TreeViewSettings = styled.div`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   padding: 12px 16px;
   background: #fafafa;
@@ -36,9 +44,8 @@ const TreeViewSettings = styled.div`
 `;
 
 const ViewLabel = styled.span`
-  font-weight: ${(props) => (props.active ? "600" : "400")};
-  color: ${(props) => (props.active ? "#1890ff" : "#595959")};
-  transition: all 0.2s ease;
+  font-weight: ${(props) => (props.$active ? "600" : "400")};
+  color: ${(props) => (props.$active ? "#1890ff" : "#595959")};
 `;
 
 const DirectoryView = styled.div`
@@ -47,8 +54,6 @@ const DirectoryView = styled.div`
   border: 1px solid #d9d9d9;
   padding: 10px;
   border-radius: 8px;
-  box-shadow: inset 0 -10px 10px -10px rgba(0, 0, 0, 0.1),
-    inset 0 10px 10px -10px rgba(0, 0, 0, 0.1);
 `;
 
 const NothingCompiledWarning = styled.div`
@@ -70,49 +75,69 @@ const CompileInstructionContainer = styled.div`
   align-items: center;
 `;
 
-const TREE_CONFIG = {
-  orientation: "vertical",
-  pathFunc: "straight",
-  separation: { siblings: 1.8, nonSiblings: 1.2 },
-  zoom: 0.8,
-  nodeSize: { x: 100, y: 100 },
+let vizPromise;
+const getViz = () => {
+  vizPromise ??= instance();
+  return vizPromise;
 };
 
-/**
- * Componente para visualização de árvores sintáticas
- */
 export const SyntaxTree = () => {
   const { completeSyntaxTree, simplifiedSyntaxTree, tab } = useAppData();
   const [treeVisualization, setTreeVisualization] = useState(true);
-  const containerRef = useRef(null);
-  const [translate, setTranslate] = useState({ x: 0, y: 0 });
-
-  // Calcula a posição inicial da árvore quando o container é montado
-  useEffect(() => {
-    if (containerRef.current) {
-      const { width, height } = containerRef.current.getBoundingClientRect();
-      setTranslate({
-        x: width / 2,
-        y: height / 6,
-      });
-    }
-  }, []);
+  const [zoom, setZoom] = useState(1);
+  const [renderError, setRenderError] = useState("");
+  const treeRef = useRef(null);
 
   const nothingCompiled = Object.keys(completeSyntaxTree).length === 0;
   const currentTree = tab === "syntaxTree" ? simplifiedSyntaxTree : completeSyntaxTree;
 
+  useEffect(() => {
+    if (!treeVisualization || nothingCompiled || !treeRef.current) return undefined;
+
+    let cancelled = false;
+    setRenderError("");
+    treeRef.current.replaceChildren();
+
+    getViz()
+      .then((viz) => viz.renderSVGElement(syntaxTreeToDot(currentTree)))
+      .then((svg) => {
+        if (cancelled || !treeRef.current) return;
+        svg.removeAttribute("width");
+        svg.removeAttribute("height");
+        svg.setAttribute("preserveAspectRatio", "xMidYMin meet");
+        treeRef.current.replaceChildren(svg);
+      })
+      .catch((error) => {
+        if (!cancelled) setRenderError(`Não foi possível gerar a árvore: ${error.message}`);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentTree, nothingCompiled, treeVisualization]);
+
   return (
     <ViewContainer id="viewContainer">
       <TreeViewSettings>
-        <ViewLabel active={treeVisualization}>Visualização em árvore</ViewLabel>
+        <ViewLabel $active={treeVisualization}>Visualização em árvore</ViewLabel>
         <Switch
           disabled={nothingCompiled}
-          onChange={() => {
-            setTreeVisualization(!treeVisualization);
-          }}
+          onChange={() => setTreeVisualization((visible) => !visible)}
           checked={!treeVisualization}
+          aria-label="Alternar visualização em diretório"
         />
-        <ViewLabel active={!treeVisualization}>Visualização em diretório</ViewLabel>
+        <ViewLabel $active={!treeVisualization}>Visualização em diretório</ViewLabel>
+        {treeVisualization && (
+          <>
+            <Button size="small" disabled={zoom <= 0.2} onClick={() => setZoom((value) => Math.max(0.2, value / 1.2))}>
+              −
+            </Button>
+            <Button size="small" onClick={() => setZoom(1)}>Ajustar</Button>
+            <Button size="small" disabled={zoom >= 5} onClick={() => setZoom((value) => Math.min(5, value * 1.2))}>
+              +
+            </Button>
+          </>
+        )}
       </TreeViewSettings>
 
       {!treeVisualization && (
@@ -122,20 +147,8 @@ export const SyntaxTree = () => {
       )}
 
       {treeVisualization && (
-        <TreeContainer ref={containerRef} hidden={nothingCompiled}>
-          <Tree
-            orientation={TREE_CONFIG.orientation}
-            pathFunc={TREE_CONFIG.pathFunc}
-            data={currentTree}
-            translate={translate}
-            separation={TREE_CONFIG.separation}
-            renderCustomNodeElement={renderCustomNode}
-            zoom={TREE_CONFIG.zoom}
-            nodeSize={TREE_CONFIG.nodeSize}
-            rootNodeClassName="node__root"
-            branchNodeClassName="node__branch"
-            leafNodeClassName="node__leaf"
-          />
+        <TreeContainer ref={treeRef} $hidden={nothingCompiled} $zoom={zoom}>
+          {renderError && <p role="alert">{renderError}</p>}
         </TreeContainer>
       )}
 

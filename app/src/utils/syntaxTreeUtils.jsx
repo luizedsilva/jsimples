@@ -85,3 +85,36 @@ export const convertToAntdTree = (data) => {
 
   return [convertNode(data, '0')];
 };
+
+const escapeDotLabel = (value) => String(value)
+  .replace(/\\/g, '\\\\')
+  .replace(/"/g, '\\"')
+  .replace(/\n/g, '\\n');
+
+/** Converte a árvore do parser para o formato DOT usado pelo Viz. */
+export const syntaxTreeToDot = (root) => {
+  if (!root) return "digraph SyntaxTree {}";
+
+  const lines = [
+    "digraph SyntaxTree {",
+    '  graph [rankdir="TB", bgcolor="transparent", nodesep="0.28", ranksep="0.55", pad="0.25", splines="polyline"];',
+    '  node [shape="box", style="rounded,filled", fontname="Arial", fontsize="11", margin="0.12,0.08", color="#b8c4d6", fontcolor="#263449"];',
+    '  edge [color="#8795aa", penwidth="1.2", arrowsize="0.65"];',
+  ];
+
+  let nextId = 0;
+  const visit = (node, parentId = null, isRoot = false) => {
+    const id = `node${nextId++}`;
+    const children = Array.isArray(node.children) ? node.children : [];
+    const fill = isRoot ? "#2c3aff" : children.length ? "#e8edff" : "#f4f7fb";
+    const font = isRoot ? "white" : "#263449";
+    const border = isRoot ? "#2c3aff" : children.length ? "#647bff" : "#b8c4d6";
+    lines.push(`  ${id} [label="${escapeDotLabel(node.name)}", fillcolor="${fill}", fontcolor="${font}", color="${border}"];`);
+    if (parentId) lines.push(`  ${parentId} -> ${id};`);
+    children.forEach((child) => visit(child, id));
+  };
+
+  visit(root, null, true);
+  lines.push("}");
+  return lines.join("\n");
+};
