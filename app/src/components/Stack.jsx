@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { COLORS, SIZES } from "@/constants/theme";
+import { COLORS } from "@/constants/theme";
 
 const StackFrame = styled.div`
   display: flex;
@@ -9,8 +9,8 @@ const StackFrame = styled.div`
   width: 100%;
   max-width: 150px;
   min-width: 100px;
-  min-height: ${SIZES.stack.minHeight};
-  max-height: ${SIZES.stack.maxHeight};
+  min-height: 280px;
+  max-height: 280px;
   overflow-y: auto;
   justify-content: flex-start;
   align-items: center;
@@ -21,15 +21,15 @@ const StackFrame = styled.div`
   @media (max-width: 768px) {
     max-width: 120px;
     min-width: 80px;
-    min-height: 300px;
-    max-height: 300px;
+    min-height: 220px;
+    max-height: 220px;
   }
 
   @media (max-width: 480px) {
     max-width: 100px;
     min-width: 70px;
-    min-height: 250px;
-    max-height: 250px;
+    min-height: 180px;
+    max-height: 180px;
   }
 `;
 

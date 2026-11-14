@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { MVSViewer } from "./tools/MVSViewer";
 import { MachineStateViewer } from "./tools/MachineStateViewer";
 import { SymbolTable } from "./SymbolTable";
+import { Button } from "antd";
 
 const WorkspaceRoot = styled.div`
   display: flex;
@@ -35,7 +36,7 @@ const SplitLayout = styled.div`
 `;
 
 const StyledCard = styled.div`
-  padding: 24px;
+  padding: 14px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -47,6 +48,10 @@ const StyledCard = styled.div`
   min-width: 0;
   width: 100%;
   z-index: 1;
+
+  @media (max-width: 768px) {
+    padding: 10px;
+  }
 `;
 
 const ContentWrapper = styled.div`
@@ -109,9 +114,16 @@ const SymbolTableRow = styled.div`
   min-height: 0;
 `;
 
+const WorkspaceControls = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+`;
+
 export const Workspace = () => {
   const { tab } = useAppData();
   const [split, setSplit] = useState(50);
+  const [showSymbolTable, setShowSymbolTable] = useState(true);
   const layoutRef = useRef(null);
 
   const resizeSplit = (event) => {
@@ -178,11 +190,22 @@ export const Workspace = () => {
         </StyledCard>
       </SplitLayout>
 
-      <SymbolTableRow>
-        <StyledCard>
-          <SymbolTable />
-        </StyledCard>
-      </SymbolTableRow>
+      <WorkspaceControls>
+        <Button
+          size="small"
+          aria-pressed={showSymbolTable}
+          onClick={() => setShowSymbolTable((visible) => !visible)}
+        >
+          {showSymbolTable ? "Ocultar tabela de símbolos" : "Mostrar tabela de símbolos"}
+        </Button>
+      </WorkspaceControls>
+      {showSymbolTable && (
+        <SymbolTableRow>
+          <StyledCard>
+            <SymbolTable />
+          </StyledCard>
+        </SymbolTableRow>
+      )}
     </WorkspaceRoot>
   );
 };

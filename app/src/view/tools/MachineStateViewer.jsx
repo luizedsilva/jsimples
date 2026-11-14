@@ -68,7 +68,7 @@ const SecondarySection = styled.div`
   border-radius: 8px;
   display: flex;
   height: auto;
-  min-height: 310px;
+  min-height: 0;
   width: 100%;
   flex-direction: column;
   align-items: center;
@@ -359,7 +359,7 @@ export const MachineStateViewer = () => {
                   pagination={false}
                   size="small"
                   rowKey={(_, index) => index}
-                  scroll={{ y: 320, x: "max-content" }}
+                  scroll={{ y: 240, x: "max-content" }}
                 />
               </InstructionTableViewport>
 
