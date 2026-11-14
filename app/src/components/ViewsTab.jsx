@@ -20,6 +20,10 @@ export const ViewsTab = () => {
         {
             key: 'mvs',
             label: 'MVS Passo a passo'
+        },
+        {
+            key: 'symbols',
+            label: 'Tabela de Símbolos'
         }
     ]
 

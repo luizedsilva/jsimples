@@ -8,7 +8,6 @@ import styled from "styled-components";
 import { MVSViewer } from "./tools/MVSViewer";
 import { MachineStateViewer } from "./tools/MachineStateViewer";
 import { SymbolTable } from "./SymbolTable";
-import { Button } from "antd";
 
 const WorkspaceRoot = styled.div`
   display: flex;
@@ -110,23 +109,9 @@ const SplitHandle = styled.div`
   }
 `;
 
-const SymbolTableRow = styled.div`
-  flex: 0 1 32%;
-  min-height: 0;
-  overflow: auto;
-`;
-
-const WorkspaceControls = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  flex: 0 0 auto;
-  min-height: 32px;
-`;
-
 export const Workspace = () => {
   const { tab } = useAppData();
   const [split, setSplit] = useState(50);
-  const [showSymbolTable, setShowSymbolTable] = useState(true);
   const layoutRef = useRef(null);
 
   const resizeSplit = (event) => {
@@ -162,15 +147,6 @@ export const Workspace = () => {
 
   return (
     <WorkspaceRoot>
-      <WorkspaceControls>
-        <Button
-          size="small"
-          aria-pressed={showSymbolTable}
-          onClick={() => setShowSymbolTable((visible) => !visible)}
-        >
-          {showSymbolTable ? "Ocultar tabela de símbolos" : "Mostrar tabela de símbolos"}
-        </Button>
-      </WorkspaceControls>
       <SplitLayout ref={layoutRef} $split={split}>
         <StyledCard>
           {(tab === "terminal" || tab === "syntaxTree" || tab === "derivationTree") && <CodeEditor />}
@@ -198,17 +174,10 @@ export const Workspace = () => {
             {(tab === "syntaxTree" || tab === "derivationTree") && <SyntaxTree />}
             {tab === "terminal" && <Terminal />}
             {tab === "mvs" && <MachineStateViewer />}
+            {tab === "symbols" && <SymbolTable />}
           </ContentWrapper>
         </StyledCard>
       </SplitLayout>
-
-      {showSymbolTable && (
-        <SymbolTableRow>
-          <StyledCard>
-            <SymbolTable />
-          </StyledCard>
-        </SymbolTableRow>
-      )}
     </WorkspaceRoot>
   );
 };
