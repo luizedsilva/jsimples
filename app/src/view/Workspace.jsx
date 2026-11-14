@@ -119,9 +119,14 @@ export const Workspace = () => {
     if (!bounds) return;
 
     const vertical = window.matchMedia("(max-width: 768px)").matches;
-    const nextSplit = vertical
-      ? ((event.clientY - bounds.top) / (bounds.height - 12)) * 100
-      : ((event.clientX - bounds.left) / (bounds.width - 12)) * 100;
+    const extent = vertical ? bounds.height : bounds.width;
+    const origin = vertical ? bounds.top : bounds.left;
+    const position = vertical ? event.clientY : event.clientX;
+    const usableExtent = extent - 12;
+    if (!Number.isFinite(usableExtent) || usableExtent <= 0) return;
+
+    const nextSplit = ((position - origin) / usableExtent) * 100;
+    if (!Number.isFinite(nextSplit)) return;
     setSplit(Math.max(25, Math.min(75, nextSplit)));
   };
 

@@ -6,7 +6,7 @@ import {
   getCodeMirrorExtensions,
   CODE_MIRROR_BASIC_SETUP,
 } from "@/config/codeMirrorConfig";
-import { COLORS, SIZES } from "@/constants/theme";
+import { COLORS } from "@/constants/theme";
 
 const StyledCodeMirror = styled.div`
   flex: 1;
