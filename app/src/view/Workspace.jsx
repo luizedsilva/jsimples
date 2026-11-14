@@ -30,7 +30,7 @@ const SplitLayout = styled.div`
   @media (max-width: 768px) {
     flex: none;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(500px, ${({ $split }) => $split}fr) 12px minmax(500px, ${({ $split }) => 100 - $split}fr);
+    grid-template-rows: minmax(500px, ${({ $split }) => `${$split}vh`}) 12px minmax(500px, ${({ $split }) => `${100 - $split}vh`});
   }
 `;
 
@@ -125,7 +125,8 @@ export const Workspace = () => {
     const usableExtent = extent - 12;
     if (!Number.isFinite(usableExtent) || usableExtent <= 0) return;
 
-    const nextSplit = ((position - origin) / usableExtent) * 100;
+    const handleOffset = vertical ? event.currentTarget.getBoundingClientRect().height / 2 : event.currentTarget.getBoundingClientRect().width / 2;
+    const nextSplit = ((position - origin - handleOffset) / usableExtent) * 100;
     if (!Number.isFinite(nextSplit)) return;
     setSplit(Math.max(25, Math.min(75, nextSplit)));
   };
