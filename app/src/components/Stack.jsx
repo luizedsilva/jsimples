@@ -9,8 +9,8 @@ const StackFrame = styled.div`
   width: 100%;
   max-width: 150px;
   min-width: 100px;
-  min-height: ${({ $compact }) => ($compact ? "360px" : "280px")};
-  max-height: ${({ $compact }) => ($compact ? "360px" : "280px")};
+  min-height: ${({ $compact }) => ($compact ? "410px" : "280px")};
+  max-height: ${({ $compact }) => ($compact ? "410px" : "280px")};
   overflow-y: auto;
   justify-content: flex-start;
   align-items: center;
@@ -21,15 +21,15 @@ const StackFrame = styled.div`
   @media (max-width: 768px) {
     max-width: 120px;
     min-width: 80px;
-    min-height: ${({ $compact }) => ($compact ? "280px" : "220px")};
-    max-height: ${({ $compact }) => ($compact ? "280px" : "220px")};
+    min-height: ${({ $compact }) => ($compact ? "310px" : "220px")};
+    max-height: ${({ $compact }) => ($compact ? "310px" : "220px")};
   }
 
   @media (max-width: 480px) {
     max-width: 100px;
     min-width: 70px;
-    min-height: ${({ $compact }) => ($compact ? "230px" : "180px")};
-    max-height: ${({ $compact }) => ($compact ? "230px" : "180px")};
+    min-height: ${({ $compact }) => ($compact ? "260px" : "180px")};
+    max-height: ${({ $compact }) => ($compact ? "260px" : "180px")};
   }
 `;
 

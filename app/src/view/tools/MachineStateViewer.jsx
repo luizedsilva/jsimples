@@ -79,14 +79,14 @@ const SecondarySection = styled.div`
 `;
 
 const ControlBar = styled.div`
-  margin: 20px 0px;
+  margin: 34px 0px 12px;
   display: flex;
   gap: 15px;
   flex-direction: column;
   width: 100%;
 
   @media (max-width: 768px) {
-    margin: 15px 0;
+    margin: 22px 0 10px;
     gap: 10px;
   }
 `;
@@ -313,7 +313,7 @@ export const MachineStateViewer = () => {
                     if (index === executionMarkers.last) return "mvs-executed-row";
                     return "";
                   }}
-                  scroll={{ y: 360, x: "max-content" }}
+                  scroll={{ y: 410, x: "max-content" }}
                 />
               </InstructionTableViewport>
 
