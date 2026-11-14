@@ -24,14 +24,16 @@ const WorkspaceRoot = styled.div`
 
 const SplitLayout = styled.div`
   display: grid;
-  flex: 1;
+  flex: 0 0 680px;
+  height: 680px;
   min-height: 0;
   grid-template-columns: minmax(0, ${({ $split }) => $split}fr) 12px minmax(0, ${({ $split }) => 100 - $split}fr);
 
   @media (max-width: 768px) {
     flex: none;
+    height: 1120px;
     grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: minmax(500px, ${({ $split }) => `${$split}vh`}) 12px minmax(500px, ${({ $split }) => `${100 - $split}vh`});
+    grid-template-rows: minmax(0, 1fr) 12px minmax(0, 1fr);
   }
 `;
 

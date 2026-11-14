@@ -214,9 +214,9 @@ const ResponsiveCol = styled(Col)`
  */
 const getInstructionColumns = () => [
   {
-    title: "Endereço",
+    title: "#",
     dataIndex: "address",
-    width: 60,
+    width: 10,
     render: (_, __, index) => index,
   },
   {
@@ -230,7 +230,7 @@ const getInstructionColumns = () => [
     width: 50,
   },
   {
-    title: "Parâmetro",
+    title: "Operando",
     dataIndex: "parameter",
     width: 60,
   },
