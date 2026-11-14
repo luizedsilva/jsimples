@@ -90,7 +90,9 @@ O repositório também inclui `jsimples_scorm/`, uma distribuição para uso em 
 
 ## Publicação
 
-A aplicação web está publicada em <https://luizedsilva.github.io/jsimples/>. Para publicar uma nova versão, gere o build e envie o conteúdo atualizado de `app/dist/` ao destino configurado para o GitHub Pages, mantendo a aplicação no caminho `/jsimples/`.
+A aplicação web está publicada em <https://luizedsilva.github.io/jsimples/>. O workflow [Deploy to GitHub Pages](../.github/workflows/pages.yml) constrói `app/` e publica `app/dist/` automaticamente quando há um push para `main` com alterações em `app/**` ou no próprio workflow. Também pode ser iniciado manualmente pela aba **Actions** do GitHub (`workflow_dispatch`). Consulte a execução mais recente nessa aba se a aplicação ainda não refletir um commit; o deploy precisa terminar com sucesso.
+
+O README é documentação do repositório e não faz parte do site publicado: o workflow envia apenas `app/dist/` ao GitHub Pages. Assim, uma alteração neste arquivo aparece no GitHub após o push do commit, mas não altera a página da aplicação. Para atualizar o site, altere o código da aplicação e deixe o workflow gerar e publicar um novo build.
 
 ## Material relacionado
 

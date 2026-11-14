@@ -10,6 +10,8 @@ import { COLORS, SIZES } from "@/constants/theme";
 
 const StyledCodeMirror = styled.div`
   flex: 1;
+  min-height: 0;
+  min-width: 0;
   border-radius: 12px;
   border: 2px solid ${COLORS.border.default};
   overflow: hidden;
@@ -86,7 +88,7 @@ export const CodeInput = ({ stepByStep = false }) => {
       <CodeMirror
         value={code || ""}
         extensions={extensions}
-        height={SIZES.codeEditor.height}
+        height="100%"
         onChange={(value) => setCode(value)}
         placeholder="Digite seu código aqui..."
         basicSetup={CODE_MIRROR_BASIC_SETUP}
