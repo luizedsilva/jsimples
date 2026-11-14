@@ -281,17 +281,19 @@ const getLegendItems = () => [
 export const MachineStateViewer = () => {
   const controlBarRef = useRef(null);
   const legendRef = useRef(null);
-  const [lastExecuted, setLastExecuted] = useState(-1);
-  const [executed, setExecuted] = useState(0);
+  const [executionMarkers, setExecutionMarkers] = useState({ last: -1, current: 0 });
   const { mvsState, parserResponse, vmRef, resetVm, setMvsState } = useAppData();
 
   // Atualiza os ponteiros de execução
   useEffect(() => {
-    setLastExecuted(executed);
-    setExecuted(mvsState.instructionPointer);
+    setExecutionMarkers((markers) => {
+      const current = mvsState.instructionPointer;
+      if (markers.current === current) return markers;
+      return { last: markers.current, current };
+    });
   }, [mvsState.instructionPointer]);
 
-  const columnsInstructions = getInstructionColumns(executed, lastExecuted);
+  const columnsInstructions = getInstructionColumns(executionMarkers.current, executionMarkers.last);
   const legendItems = getLegendItems();
   const hasMvsCode = parserResponse?.mvs?.length > 0;
 
