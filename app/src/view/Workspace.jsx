@@ -120,8 +120,8 @@ export const Workspace = () => {
 
     const vertical = window.matchMedia("(max-width: 768px)").matches;
     const nextSplit = vertical
-      ? ((event.clientY - bounds.top) / bounds.height) * 100
-      : ((event.clientX - bounds.left) / bounds.width) * 100;
+      ? ((event.clientY - bounds.top) / (bounds.height - 12)) * 100
+      : ((event.clientX - bounds.left) / (bounds.width - 12)) * 100;
     setSplit(Math.max(25, Math.min(75, nextSplit)));
   };
 

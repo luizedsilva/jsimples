@@ -1,24 +1,97 @@
-# Para executar local
+# JSimples
 
-Entre na pasata `app`
+JSimples é uma aplicação web didática para apoiar o ensino e a aprendizagem de conceitos de teoria de linguagens e compiladores. A pessoa usuária escreve programas na linguagem Simples e acompanha a análise do código e sua execução em uma máquina virtual MVS.
 
-digite:
+## Recursos
 
-```
+- Editor de código com realce da instrução em execução.
+- Compilador da linguagem Simples, com árvore sintática e tabela de símbolos.
+- Simulador MVS com execução passo a passo, estado da máquina, memória e pilha.
+- Terminal interativo para entrada e saída do programa.
+- Painéis redimensionáveis e interface adaptável a telas menores.
+
+## Tecnologias e documentação
+
+- [React](https://react.dev/learn) e [React DOM](https://react.dev/reference/react-dom): interface e renderização.
+- [Vite](https://vite.dev/guide/): servidor de desenvolvimento e build de produção.
+- [CodeMirror 6](https://codemirror.net/docs/) e [@uiw/react-codemirror](https://uiwjs.github.io/react-codemirror/): editor de código.
+- [Ant Design](https://ant.design/components/overview/): componentes de interface.
+- [styled-components](https://styled-components.com/docs): estilos associados aos componentes.
+- [Viz.js](https://viz-js.com/api/): renderização da árvore sintática.
+- [React Icons](https://react-icons.github.io/react-icons/): ícones.
+- [ESLint](https://eslint.org/docs/latest/): análise estática do código.
+
+## Organização
+
+O aplicativo está na pasta `app/`. Os arquivos principais ficam em `app/src/`:
+
+| Caminho | Conteúdo |
+| --- | --- |
+| `App.jsx`, `main.jsx`, `index.css` | Inicialização da aplicação, tema global e estilos base. |
+| `components/` | Componentes reutilizáveis da interface, como cabeçalho, editor e controles. |
+| `contexts/AppContext.jsx` | Estado compartilhado do código, compilação e execução da MVS. |
+| `core/compiler/simples.js` | Analisador/compilador da linguagem Simples e geração de instruções MVS. |
+| `core/mvs/mvs.js` | Máquina virtual e execução das instruções MVS. |
+| `view/` | Telas principais, espaço de trabalho, tabela de símbolos e ferramentas visuais. |
+| `view/tools/` | Editor, terminal, árvore sintática, visualização da MVS e estado da máquina. |
+| `config/`, `constants/` | Configurações do editor, constantes e temas. |
+| `utils/` | Funções auxiliares para datas e representação da árvore sintática. |
+| `styles/`, `assets/` | Folhas de estilo e imagens/logotipos usados pela interface. |
+
+`app/vite.config.js` define o alias `@` para `app/src/` e o caminho-base `/jsimples/`, usado na publicação no GitHub Pages. A pasta `jsimples_scorm/` contém uma distribuição SCORM separada.
+
+## Requisitos
+
+- Node.js compatível com a versão instalada do Vite 6 (Node.js 18 ou superior).
+- npm.
+
+## Desenvolvimento local
+
+No terminal, a partir da raiz do repositório:
+
+```bash
+cd app
+npm install
 npm run dev
 ```
 
-Acesse o endereço local que o Vite mostrar, geralmente http://localhost:5173/. Para conferir a versão de produção antes de publicar, rode npm run build e depois npm run preview.
+Abra o endereço local informado pelo Vite, normalmente <http://localhost:5173/>.
 
-# React + Vite
+## Comandos disponíveis
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Execute-os dentro de `app/`:
 
-Currently, two official plugins are available:
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev` | Inicia o servidor local com atualização durante o desenvolvimento. |
+| `npm run lint` | Verifica o código com ESLint. |
+| `npm run build` | Gera a versão de produção em `app/dist/`. |
+| `npm run preview` | Serve localmente o conteúdo já construído para conferência. Rode depois de `npm run build`. |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Construir e distribuir
 
-## Expanding the ESLint configuration
+1. Instale as dependências e gere o build:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+   ```bash
+   cd app
+   npm install
+   npm run build
+   ```
+
+2. O conteúdo estático pronto para hospedagem será criado em `app/dist/`. Publique **o conteúdo dessa pasta** em um servidor de arquivos estáticos. Como o caminho-base está configurado como `/jsimples/`, a aplicação espera ser publicada nesse caminho; para hospedá-la na raiz de outro domínio, ajuste `base` em `app/vite.config.js` antes do build.
+
+3. Para conferir o resultado localmente:
+
+   ```bash
+   npm run preview
+   ```
+
+O repositório também inclui `jsimples_scorm/`, uma distribuição para uso em ambientes compatíveis com SCORM. O processo acima constrói a aplicação web em `app/dist/`; ele não gera nem atualiza automaticamente o pacote SCORM.
+
+## Publicação
+
+A aplicação web está publicada em <https://luizedsilva.github.io/jsimples/>. Para publicar uma nova versão, gere o build e envie o conteúdo atualizado de `app/dist/` ao destino configurado para o GitHub Pages, mantendo a aplicação no caminho `/jsimples/`.
+
+## Material relacionado
+
+O artigo sobre a ferramenta está disponível no arquivo [`JSimples___Uma_ferramenta_web_didática_para_o_ensino_de_conceitos_de_teoria_de_linguagens_e_compiladores.pdf`](src/assets/JSimples___Uma_ferramenta_web_didática_para_o_ensino_de_conceitos_de_teoria_de_linguagens_e_compiladores.pdf).
