@@ -200,6 +200,15 @@ const ResponsiveTable = styled(Table)`
   }
 `;
 
+const InstructionTableViewport = styled.div`
+  min-width: 0;
+  width: min(100%, 560px);
+
+  .ant-table-body {
+    scrollbar-gutter: stable;
+  }
+`;
+
 const ResponsiveRow = styled(Row)`
   @media (max-width: 768px) {
     flex-direction: column;
@@ -281,6 +290,7 @@ const getLegendItems = () => [
 export const MachineStateViewer = () => {
   const controlBarRef = useRef(null);
   const legendRef = useRef(null);
+  const instructionTableRef = useRef(null);
   const [executionMarkers, setExecutionMarkers] = useState({ last: -1, current: 0 });
   const { mvsState, parserResponse, vmRef, resetVm, setMvsState } = useAppData();
 
@@ -292,6 +302,24 @@ export const MachineStateViewer = () => {
       return { last: markers.current, current };
     });
   }, [mvsState.instructionPointer]);
+
+  // Mantém a próxima instrução visível quando a execução avança.
+  useEffect(() => {
+    const body = instructionTableRef.current?.querySelector(".ant-table-body");
+    const row = body?.querySelector(`tr[data-row-key="${mvsState.instructionPointer}"]`);
+    if (!body || !row) return;
+
+    const rowTop = row.offsetTop - body.offsetTop;
+    const rowBottom = rowTop + row.offsetHeight;
+    const visibleTop = body.scrollTop;
+    const visibleBottom = visibleTop + body.clientHeight;
+    if (rowTop < visibleTop || rowBottom > visibleBottom) {
+      body.scrollTo({
+        top: Math.max(0, rowTop - (body.clientHeight - row.offsetHeight) / 2),
+        behavior: "smooth",
+      });
+    }
+  }, [mvsState.instructionPointer, parserResponse.mvs]);
 
   const columnsInstructions = getInstructionColumns(executionMarkers.current, executionMarkers.last);
   const legendItems = getLegendItems();
@@ -324,14 +352,16 @@ export const MachineStateViewer = () => {
         <SecondarySection>
           {hasMvsCode && (
             <TableWrapper>
-              <ResponsiveTable
-                columns={columnsInstructions}
-                dataSource={parserResponse.mvs}
-                pagination={false}
-                size="small"
-                rowKey="key"
-                scroll={{ y: 460, x: "max-content" }}
-              />
+              <InstructionTableViewport ref={instructionTableRef}>
+                <ResponsiveTable
+                  columns={columnsInstructions}
+                  dataSource={parserResponse.mvs}
+                  pagination={false}
+                  size="small"
+                  rowKey={(_, index) => index}
+                  scroll={{ y: 320, x: "max-content" }}
+                />
+              </InstructionTableViewport>
 
               <StackWrapper>
                 <SectionTitle>Pilha M</SectionTitle>
