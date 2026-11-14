@@ -50,7 +50,9 @@ const createHighlightExtension = (first_line, first_column, last_line, last_colu
   const getPos = (line, col) => {
     const safeLine = Math.max(1, Math.min(doc.lines, line));
     const lineInfo = doc.line(safeLine);
-    return Math.max(lineInfo.from, Math.min(lineInfo.to, lineInfo.from + col - 1));
+    // Jison reports columns as zero-based offsets, matching CodeMirror's
+    // document positions, so do not subtract one here.
+    return Math.max(lineInfo.from, Math.min(lineInfo.to, lineInfo.from + col));
   };
 
   const start = getPos(first_line, first_column);
