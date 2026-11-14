@@ -1,15 +1,13 @@
-import { Button, Col, Collapse, List, Row, Table } from "antd";
+import { Button, Col, Row, Table } from "antd";
 import { useAppData } from "@/contexts/AppContext";
 import styled from "styled-components";
 import { Stack } from "@/components/Stack";
 import "@/styles/Table.css";
-import { FaArrowRight } from "react-icons/fa";
 import { useEffect, useRef, useState } from "react";
 import { IoWarning } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
 import { VscDebugRestart } from "react-icons/vsc";
 import { Pointer } from "@/components/Pointer";
-import { COLORS } from "@/constants/theme";
 
 const Container = styled.div`
   min-height: 70px;
@@ -80,10 +78,6 @@ const SecondarySection = styled.div`
   }
 `;
 
-const ArrowCell = styled.div`
-  text-align: center;
-`;
-
 const ControlBar = styled.div`
   margin: 20px 0px;
   display: flex;
@@ -128,22 +122,6 @@ const StackWrapper = styled.div`
   }
 `;
 
-const MarginRightArrow = styled(FaArrowRight)`
-  margin-right: 30px;
-
-  @media (max-width: 768px) {
-    margin-right: 15px;
-  }
-`;
-
-const JustExecutedArrow = styled(MarginRightArrow)`
-  fill: ${COLORS.arrow.justExecuted};
-`;
-
-const NextToExecuteArrow = styled(MarginRightArrow)`
-  fill: ${COLORS.arrow.nextToExecute};
-`;
-
 const Warning = styled.div`
   display: flex;
   flex-direction: row;
@@ -179,6 +157,14 @@ const PointersContainer = styled.div`
 `;
 
 const ResponsiveTable = styled(Table)`
+  .mvs-next-row > td {
+    background: #ffe2e2 !important;
+  }
+
+  .mvs-executed-row > td {
+    background: #e1efff !important;
+  }
+
   .ant-table-thead > tr > th {
     @media (max-width: 768px) {
       font-size: 12px;
@@ -226,29 +212,7 @@ const ResponsiveCol = styled(Col)`
 /**
  * Configuração das colunas da tabela de instruções
  */
-const getInstructionColumns = (executed, lastExecuted) => [
-  {
-    title: "",
-    dataIndex: "key",
-    width: 30,
-    render: (_, record, index) => {
-      if (index === executed) {
-        return (
-          <ArrowCell>
-            <NextToExecuteArrow />
-          </ArrowCell>
-        );
-      }
-      if (index === lastExecuted) {
-        return (
-          <ArrowCell>
-            <JustExecutedArrow />
-          </ArrowCell>
-        );
-      }
-      return null;
-    },
-  },
+const getInstructionColumns = () => [
   {
     title: "Endereço",
     dataIndex: "address",
@@ -273,23 +237,9 @@ const getInstructionColumns = (executed, lastExecuted) => [
 ];
 
 /**
- * Legenda das setas de execução
- */
-const getLegendItems = () => [
-  <div key="next">
-    <NextToExecuteArrow /> Ponteiro para a próxima instrução
-  </div>,
-  <div key="last">
-    <JustExecutedArrow /> Última instrução executada
-  </div>,
-];
-
-/**
  * Componente para visualização do estado da máquina MVS
  */
 export const MachineStateViewer = () => {
-  const controlBarRef = useRef(null);
-  const legendRef = useRef(null);
   const instructionTableRef = useRef(null);
   const [executionMarkers, setExecutionMarkers] = useState({ last: -1, current: 0 });
   const { mvsState, parserResponse, vmRef, resetVm, setMvsState } = useAppData();
@@ -321,8 +271,7 @@ export const MachineStateViewer = () => {
     }
   }, [mvsState.instructionPointer, parserResponse.mvs]);
 
-  const columnsInstructions = getInstructionColumns(executionMarkers.current, executionMarkers.last);
-  const legendItems = getLegendItems();
+  const columnsInstructions = getInstructionColumns();
   const hasMvsCode = parserResponse?.mvs?.length > 0;
 
   /**
@@ -359,18 +308,23 @@ export const MachineStateViewer = () => {
                   pagination={false}
                   size="small"
                   rowKey={(_, index) => index}
-                  scroll={{ y: 240, x: "max-content" }}
+                  rowClassName={(_, index) => {
+                    if (index === executionMarkers.current) return "mvs-next-row";
+                    if (index === executionMarkers.last) return "mvs-executed-row";
+                    return "";
+                  }}
+                  scroll={{ y: 360, x: "max-content" }}
                 />
               </InstructionTableViewport>
 
               <StackWrapper>
                 <SectionTitle>Pilha M</SectionTitle>
-                <Stack variables={mvsState?.memory || []} data={mvsState?.stack} />
+                <Stack variables={mvsState?.memory || []} data={mvsState?.stack} compact />
               </StackWrapper>
             </TableWrapper>
           )}
 
-          <ControlBar ref={controlBarRef}>
+          <ControlBar>
             {!hasMvsCode && (
               <WarningWrapper>
                 <Warning>
@@ -379,26 +333,6 @@ export const MachineStateViewer = () => {
                   necessário compilar o algoritmo primeiro.
                 </Warning>
               </WarningWrapper>
-            )}
-            {hasMvsCode && (
-              <Collapse
-                items={[
-                  {
-                    key: '1',
-                    label: <strong>Legenda</strong>,
-                    children: (
-                      <List
-                        ref={legendRef}
-                        dataSource={legendItems}
-                        renderItem={(item) => <List.Item>{item}</List.Item>}
-                        size="small"
-                      />
-                    ),
-                  },
-                ]}
-                defaultActiveKey={['1']}
-                size="small"
-              />
             )}
             <ResponsiveRow gutter={[16, 16]} align={"center"} justify="center">
               <ResponsiveCol>
