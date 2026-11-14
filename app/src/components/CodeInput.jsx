@@ -19,6 +19,11 @@ const StyledCodeMirror = styled.div`
 
   .cm-editor {
     font-size: ${({ $fontSize }) => `${$fontSize}px`};
+    height: 100%;
+  }
+
+  .cm-scroller {
+    overflow: auto;
   }
 
   &:hover {

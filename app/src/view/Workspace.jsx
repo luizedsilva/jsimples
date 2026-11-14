@@ -13,6 +13,7 @@ import { Button } from "antd";
 const WorkspaceRoot = styled.div`
   display: flex;
   flex: 1;
+  height: 100%;
   min-height: 0;
   flex-direction: column;
   gap: 12px;
@@ -110,14 +111,16 @@ const SplitHandle = styled.div`
 `;
 
 const SymbolTableRow = styled.div`
-  flex: 1;
+  flex: 0 1 32%;
   min-height: 0;
+  overflow: auto;
 `;
 
 const WorkspaceControls = styled.div`
   display: flex;
   justify-content: flex-end;
   flex: 0 0 auto;
+  min-height: 32px;
 `;
 
 export const Workspace = () => {
@@ -159,6 +162,15 @@ export const Workspace = () => {
 
   return (
     <WorkspaceRoot>
+      <WorkspaceControls>
+        <Button
+          size="small"
+          aria-pressed={showSymbolTable}
+          onClick={() => setShowSymbolTable((visible) => !visible)}
+        >
+          {showSymbolTable ? "Ocultar tabela de símbolos" : "Mostrar tabela de símbolos"}
+        </Button>
+      </WorkspaceControls>
       <SplitLayout ref={layoutRef} $split={split}>
         <StyledCard>
           {(tab === "terminal" || tab === "syntaxTree" || tab === "derivationTree") && <CodeEditor />}
@@ -190,15 +202,6 @@ export const Workspace = () => {
         </StyledCard>
       </SplitLayout>
 
-      <WorkspaceControls>
-        <Button
-          size="small"
-          aria-pressed={showSymbolTable}
-          onClick={() => setShowSymbolTable((visible) => !visible)}
-        >
-          {showSymbolTable ? "Ocultar tabela de símbolos" : "Mostrar tabela de símbolos"}
-        </Button>
-      </WorkspaceControls>
       {showSymbolTable && (
         <SymbolTableRow>
           <StyledCard>
