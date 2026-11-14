@@ -36,17 +36,21 @@ const StyledCodeMirror = styled.div`
  */
 const createHighlightExtension = (first_line, first_column, last_line, last_column, doc) => {
   if (!first_line || !first_column || !last_line || !last_column) {
-    const deco = Decoration.mark({ class: "none" }).range(0, 1);
-    return EditorView.decorations.of(Decoration.set([deco]));
+    return EditorView.decorations.of(Decoration.none);
   }
 
+  // A source location can become stale after the user edits the program while
+  // the step-by-step view is open. Clamp it to the current document so that
+  // CodeMirror never receives an out-of-range decoration during a resize.
   const getPos = (line, col) => {
-    const lineInfo = doc.line(line);
-    return lineInfo.from + col;
+    const safeLine = Math.max(1, Math.min(doc.lines, line));
+    const lineInfo = doc.line(safeLine);
+    return Math.max(lineInfo.from, Math.min(lineInfo.to, lineInfo.from + col - 1));
   };
 
   const start = getPos(first_line, first_column);
   const end = getPos(last_line, last_column);
+  if (end <= start) return EditorView.decorations.of(Decoration.none);
 
   const deco = Decoration.mark({ class: "custom-highlight" }).range(start, end);
   return EditorView.decorations.of(Decoration.set([deco]));
