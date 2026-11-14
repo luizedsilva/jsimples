@@ -149,7 +149,7 @@ export const Workspace = () => {
     <WorkspaceRoot>
       <SplitLayout ref={layoutRef} $split={split}>
         <StyledCard>
-          {(tab === "terminal" || tab === "syntaxTree" || tab === "derivationTree") && <CodeEditor />}
+          {(tab === "terminal" || tab === "syntaxTree" || tab === "derivationTree" || tab === "symbols") && <CodeEditor />}
           {tab === "mvs" && <MVSViewer />}
         </StyledCard>
 
