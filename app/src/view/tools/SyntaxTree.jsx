@@ -9,9 +9,9 @@ import { FaGear } from "react-icons/fa6";
 import { convertToAntdTree, syntaxTreeToDot } from "@/utils/syntaxTreeUtils.jsx";
 
 const TreeContainer = styled.div`
-  flex-grow: 1;
-  min-height: 360px;
-  height: 620px;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
   border: 1px solid #d9d9d9;
   border-radius: 8px;
   position: relative;
@@ -41,6 +41,7 @@ const TreeViewSettings = styled.div`
   color: #595959;
   margin-bottom: 16px;
   justify-content: center;
+  flex: 0 0 auto;
 `;
 
 const ViewLabel = styled.span`
@@ -49,7 +50,9 @@ const ViewLabel = styled.span`
 `;
 
 const DirectoryView = styled.div`
-  height: 620px;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
   overflow: auto;
   border: 1px solid #d9d9d9;
   padding: 10px;
