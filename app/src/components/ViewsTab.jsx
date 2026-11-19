@@ -10,6 +10,10 @@ export const ViewsTab = () => {
             label: <><Badge dot={terminalNotification}>Terminal</Badge></>,
         },
         {
+            key: 'lexicalSymbols',
+            label: 'Símbolos Léxicos',
+        },
+        {
             key: 'syntaxTree',
             label: 'Árvore Sintática',
         },

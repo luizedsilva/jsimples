@@ -8,6 +8,7 @@ import styled from "styled-components";
 import { MVSViewer } from "./tools/MVSViewer";
 import { MachineStateViewer } from "./tools/MachineStateViewer";
 import { SymbolTable } from "./SymbolTable";
+import { LexicalSymbols } from "./tools/LexicalSymbols";
 
 const WorkspaceRoot = styled.div`
   display: flex;
@@ -151,7 +152,7 @@ export const Workspace = () => {
     <WorkspaceRoot>
       <SplitLayout ref={layoutRef} $split={split}>
         <StyledCard>
-          {(tab === "terminal" || tab === "syntaxTree" || tab === "derivationTree" || tab === "symbols") && <CodeEditor />}
+          {(tab === "terminal" || tab === "lexicalSymbols" || tab === "syntaxTree" || tab === "derivationTree" || tab === "symbols") && <CodeEditor />}
           {tab === "mvs" && <MVSViewer />}
         </StyledCard>
 
@@ -174,6 +175,7 @@ export const Workspace = () => {
           <ViewsTab />
           <ContentWrapper>
             {(tab === "syntaxTree" || tab === "derivationTree") && <SyntaxTree />}
+            {tab === "lexicalSymbols" && <LexicalSymbols />}
             {tab === "terminal" && <Terminal />}
             {tab === "mvs" && <MachineStateViewer />}
             {tab === "symbols" && <SymbolTable />}

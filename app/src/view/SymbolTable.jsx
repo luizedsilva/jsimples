@@ -36,8 +36,19 @@ const toPtBrCategory = (category) => {
        return "Função"
     }
 
+    if (category === "PARAMETER") {
+        return "Parâmetro"
+    }
+
     return category
 }
+
+const getSymbolCategory = (symbol) => {
+  const isParameter = symbol.scope === "LOCAL" && (
+    symbol.mechanism != null || (typeof symbol.address === "number" && symbol.address < 0)
+  );
+  return isParameter ? "PARAMETER" : symbol.category;
+};
 
 const toPtBrMechanism = (mechanism) => {
     if (mechanism == null || mechanism === undefined) {
@@ -86,7 +97,7 @@ const expandColumns = [
     title: 'Categoria',
     dataIndex: 'category',
     key: 'category',
-    render: (category) => <>{toPtBrCategory(category)}</>
+    render: (_, record) => <>{toPtBrCategory(getSymbolCategory(record))}</>
   },
   {
     title: 'Mecanismo',
@@ -177,7 +188,7 @@ const mobileColumns = [
             text={record.scope} 
           />
           <Badge 
-            text={toPtBrCategory(record.category)} 
+            text={toPtBrCategory(getSymbolCategory(record))} 
           />
         </div>
         <div style={{ fontSize: '12px', color: '#666' }}>
@@ -226,12 +237,8 @@ const DetailButton = ({ record }) => {
             />
           </div>
           <div><strong>Rótulo:</strong> {record.label !== null ? record.label : '-'}</div>
-          <div><strong>Categoria:</strong>
-            <Badge 
-              text={toPtBrCategory(record.category)} 
-              style={{ marginLeft: '8px' }}
-            />
-          </div>
+          <div><strong>Categoria:</strong> {toPtBrCategory(getSymbolCategory(record))}</div>
+          <div><strong>Mecanismo:</strong> {toPtBrMechanism(record.mechanism)}</div>
           {record.parameter && record.parameter.length > 0 && (
             <div>
               <strong>Parâmetros:</strong>
@@ -299,6 +306,28 @@ const expandedRowRender = (record) => {
   );
 };
 
+const mobileExpandedRowRender = (record) => {
+  if (!record.subSymbolTree || record.subSymbolTree.length === 0) {
+    return <div style={{ padding: '12px', fontStyle: 'italic', color: '#999' }}>Sem símbolos locais</div>;
+  }
+
+  return (
+    <div style={{ backgroundColor: '#fafafa', padding: '8px' }}>
+      <h4 style={{ margin: '4px 0 8px', color: '#1890ff' }}>
+        Tabela local de “{record.name}”
+      </h4>
+      <Table
+        columns={mobileColumns}
+        dataSource={record.subSymbolTree.map((item, index) => ({ ...item, key: `local-${record.key}-${index}` }))}
+        pagination={false}
+        size="small"
+        bordered
+        showHeader={false}
+      />
+    </div>
+  );
+};
+
 export const SymbolTable = () => {
   const { parserResponse } = useAppData();
   const [isMobile, setIsMobile] = useState(false);
@@ -322,11 +351,11 @@ export const SymbolTable = () => {
       <Table
         columns={isMobile ? mobileColumns : desktopColumns}
         dataSource={dataWithKeys}
-        expandable={!isMobile ? {
-          expandedRowRender,
-          defaultExpandedRowKeys: ['4'],
+        expandable={{
+          expandedRowRender: isMobile ? mobileExpandedRowRender : expandedRowRender,
+          defaultExpandedRowKeys: isMobile ? [] : ['4'],
           rowExpandable: (record) => (record.category === 'PROCEDURE' || record.category === "FUNCTION") && record.subSymbolTree !== null
-        } : false}
+        }}
         pagination={false}
         bordered
         size={isMobile ? "small" : "middle"}
