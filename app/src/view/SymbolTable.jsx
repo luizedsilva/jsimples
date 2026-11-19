@@ -272,7 +272,7 @@ const DetailButton = ({ record }) => {
                     <div><strong>{symbol.name}</strong> ({toPtBrType(symbol.type)})</div>
                     <div>End: {symbol.address !== null ? symbol.address : '-'} | 
                     Escopo: {symbol.scope} | 
-                    Cat: {toPtBrCategory(symbol.category)}</div>
+                    Cat: {toPtBrCategory(getSymbolCategory(symbol))}</div>
                   </div>
                 ))}
               </div>
