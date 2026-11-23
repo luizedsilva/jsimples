@@ -117,7 +117,7 @@ export const MVS = (
   const executeDivi = () => {
     let secondValue = stack.pop();
     let firstValue = stack.pop();
-    stack.push(firstValue / secondValue);
+    stack.push(Math.trunc(firstValue / secondValue));
   };
 
   const executeEscr = () => {

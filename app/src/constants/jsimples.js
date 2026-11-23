@@ -33,9 +33,11 @@ export const JSIMPLES_TYPES = [
 export const JSIMPLES_DEFAULT_CODE =
   'programa teste\n' +
   '\tinteiro a b\n' +
-  '\tlogico c d\n' +
   'inicio\n' +
-  '\ta <- 1\n' +
-  '\ta <- a * 3\n' +
-  '\tescreva a\n' +
+  '\tleia a\n' +
+  '\tleia b\n' +
+  '\tenquanto a < b faca\n' +
+  '\t\tescreva a\n' +
+  '\t\ta <- a + 1\n' +
+  '\tfimenquanto\n' +
   'fimprograma';
