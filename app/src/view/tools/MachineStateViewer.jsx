@@ -1,4 +1,4 @@
-import { Button, Col, Row, Table } from "antd";
+import { Button, Col, Row, Table, message } from "antd";
 import { useAppData } from "@/contexts/AppContext";
 import styled from "styled-components";
 import { Stack } from "@/components/Stack";
@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { IoWarning } from "react-icons/io5";
 import { AiFillCaretRight } from "react-icons/ai";
 import { VscDebugRestart } from "react-icons/vsc";
+import { MdContentCopy } from "react-icons/md";
 import { Pointer } from "@/components/Pointer";
 
 const Container = styled.div`
@@ -237,6 +238,36 @@ const getInstructionColumns = () => [
 ];
 
 /**
+ * Converte o código MVS em texto (rótulo, instrução e operando separados por tabulação)
+ */
+const formatMvsCode = (mvs = []) =>
+  mvs
+    .map(({ label, instruction, parameter }) =>
+      `${label ?? ""}\t${instruction}\t${parameter ?? ""}`.trimEnd()
+    )
+    .join("\n");
+
+/**
+ * Copia um texto para a área de transferência (com alternativa para contextos não seguros)
+ */
+const copyToClipboard = async (text) => {
+  if (navigator.clipboard?.writeText && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.setAttribute("readonly", "");
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  const ok = document.execCommand("copy");
+  document.body.removeChild(textarea);
+  if (!ok) throw new Error("Falha ao copiar");
+};
+
+/**
  * Componente para visualização do estado da máquina MVS
  */
 export const MachineStateViewer = () => {
@@ -279,6 +310,18 @@ export const MachineStateViewer = () => {
    */
   const handleExecuteNext = () => {
     setMvsState(vmRef.current?.next());
+  };
+
+  /**
+   * Copia o código MVS gerado para a área de transferência
+   */
+  const handleCopyCode = async () => {
+    try {
+      await copyToClipboard(formatMvsCode(parserResponse.mvs));
+      message.success("Código MVS copiado para a área de transferência.");
+    } catch {
+      message.error("Não foi possível copiar o código MVS.");
+    }
   };
 
   return (
@@ -345,6 +388,16 @@ export const MachineStateViewer = () => {
                 <Button onClick={handleExecuteNext} disabled={!hasMvsCode}>
                   Executar Instrução
                   <AiFillCaretRight />
+                </Button>
+              </ResponsiveCol>
+              <ResponsiveCol>
+                <Button
+                  onClick={handleCopyCode}
+                  disabled={!hasMvsCode}
+                  title="Copiar o código MVS gerado pelo compilador"
+                >
+                  <MdContentCopy />
+                  Copiar código MVS
                 </Button>
               </ResponsiveCol>
             </ResponsiveRow>
